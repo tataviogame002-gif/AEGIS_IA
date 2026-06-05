@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json"
       },
 body: JSON.stringify({
-  model: "google/gemini-2.5-flash",
+  model: "google/gemini-3.5-flash",
   messages: messages,
   max_tokens: 457 // Isso impede a IA de criar um podcast!
 })
