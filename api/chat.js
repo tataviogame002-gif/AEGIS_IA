@@ -1,8 +1,8 @@
 export default async function handler(req, res) {
-  // 1. Pega a mensagem que o seu HTML enviou
+  // 1. Pega as mensagens que o seu HTML enviou
   const { messages } = req.body;
 
-  // 2. Pega a sua chave secreta que está trancada na Vercel
+  // 2. Pega a sua chave do OpenRouter trancada na Vercel
   const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
   try {
@@ -12,20 +12,25 @@ export default async function handler(req, res) {
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://vercel.com", // Avisa o OpenRouter de onde vem o acesso
-        "X-Title": "Aegis IA" // Dá um nome para o seu projeto no sistema deles
+        "HTTP-Referer": "https://vercel.com", 
+        "X-Title": "Aegis IA"
       },
-body: JSON.stringify({
-  model: "google/gemini-2.5-flash",
-  messages: messages,
-  max_tokens:  384 // Isso impede a IA de criar um podcast!
-})
+      body: JSON.stringify({
+        // Mudamos para um modelo excelente e que não dá erro de "user not found"
+        model: "meta-llama/llama-3-8b-instruct:free",
+        messages: messages,
+        max_tokens: 384
+      })
     });
 
     const data = await response.json();
     
-    // 4. Devolve a resposta da IA para o seu HTML
-    res.status(200).json(data);
+    // 4. Devolve a resposta para o seu HTML
+    if (response.ok) {
+      res.status(200).json(data);
+    } else {
+      res.status(response.status).json({ error: data.error?.message || "Erro no OpenRouter" });
+    }
   } catch (error) {
     res.status(500).json({ error: "Erro na ponte de segurança" });
   }
