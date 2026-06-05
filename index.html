@@ -78,7 +78,7 @@
 
 <script>
     // 🔒 Configuração para a Vercel
-    const OPENROUTER_API_KEY = window.env?.OPENROUTER_API_KEY || process?.env?.OPENROUTER_API_KEY || "SUA_CHAVE_AQUI"; 
+const OPENROUTER_API_KEY = window.location.hostname === 'localhost' ? "SUA_CHAVE_AQUI" : "";
 
     const sendBtn = document.getElementById('send-btn');
     const userInput = document.getElementById('user-input');
