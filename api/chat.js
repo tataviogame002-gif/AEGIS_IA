@@ -1,37 +1,49 @@
 export default async function handler(req, res) {
-  // 1. Pega as mensagens que o seu HTML enviou
   const { messages } = req.body;
-
-  // 2. Pega a sua chave do OpenRouter trancada na Vercel
-  const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+  const COHERE_API_KEY = process.env.COHERE_API_KEY;
 
   try {
-    // 3. A ponte faz a pergunta ao OpenRouter de forma escondida
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    // Organiza o histórico no formato exigido pela Cohere
+    const chatHistory = messages.map(msg => ({
+      role: msg.role === "assistant" ? "CHATBOT" : "USER",
+      message: msg.content
+    }));
+
+    // Separa a última mensagem, pois a Cohere processa a pergunta atual separada do histórico
+    const lastMessage = chatHistory.pop();
+
+    const response = await fetch("https://api.cohere.com/v1/chat", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://vercel.com", 
-        "X-Title": "Aegis IA"
+        "Authorization": `Bearer ${COHERE_API_KEY}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        // Mudamos para um modelo excelente e que não dá erro de "user not found"
-        model: "meta-llama/llama-3-8b-instruct:free",
-        messages: messages,
-        max_tokens: 384
+        model: "command-r", // Modelo rápido, natural e eficiente
+        message: lastMessage.message,
+        chat_history: chatHistory
       })
     });
 
     const data = await response.json();
-    
-    // 4. Devolve a resposta para o seu HTML
+
     if (response.ok) {
-      res.status(200).json(data);
+      // Devolve a resposta no formato que o seu index.html já espera receber
+      const formattedData = {
+        choices: [
+          {
+            message: {
+              role: "assistant",
+              content: data.text
+            }
+          }
+        ]
+      };
+      res.status(200).json(formattedData);
     } else {
-      res.status(response.status).json({ error: data.error?.message || "Erro no OpenRouter" });
+      res.status(response.status).json({ error: data.message || "Erro de comunicação com a Cohere." });
     }
   } catch (error) {
-    res.status(500).json({ error: "Erro na ponte de segurança" });
+    res.status(500).json({ error: "Erro interno na API da Aegis." });
   }
 }
