@@ -78,7 +78,14 @@
 
 <script>
     // 🔒 Configuração para a Vercel
-    const OPENROUTER_API_KEY = "{{OPENROUTER_API_KEY}}";
+    let OPENROUTER_API_KEY = sessionStorage.getItem("api_key");
+
+if (!OPENROUTER_API_KEY) {
+    OPENROUTER_API_KEY = prompt("Por segurança, insira sua chave do OpenRouter:");
+    if (OPENROUTER_API_KEY) {
+        sessionStorage.setItem("api_key", OPENROUTER_API_KEY);
+    }
+}
     const sendBtn = document.getElementById('send-btn');
     const userInput = document.getElementById('user-input');
     const messages = document.getElementById('messages');
@@ -111,7 +118,7 @@
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
                 headers: {
-                    "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+"Authorization": `Bearer ${OPENROUTER_API_KEY}`,
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ model: "google/gemini-2.5-flash:online", messages: chatMessages, max_tokens: 1500 })
