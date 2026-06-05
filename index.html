@@ -77,7 +77,7 @@
 </div>
 
 <script>
-    // 🔒 Configuração para a Vercel
+   // 🔒 Configuração para a Vercel
     
     const sendBtn = document.getElementById('send-btn');
     const userInput = document.getElementById('user-input');
@@ -85,49 +85,59 @@
     const messagesWrapper = document.getElementById('messages-wrapper');
     const themeToggle = document.getElementById('theme-toggle');
 
-    const SYSTEM_INSTRUCTION = "Você é a Aegis IA. Você se comunica de forma amigável, acolhedora,como uma humana, porém estritamente formal, educada e polida. Suas respostas devem ser profundamente humanas, sem respotas muito roboticas ou informais, empáticas e naturais. Responda sempre em português.";
+    const SYSTEM_INSTRUCTION = "Você é a Aegis IA. Você se comunica de forma amigável, acolhedora, como uma humana, porém estritamente formal, educada e polida. Suas respostas devem ser profundamente humanas, sem respostas muito robóticas ou informais, empáticas e naturais. Responda sempre em português.";
 
     let chatMessages = [];
 
-    themeToggle.addEventListener('click', () => { document.body.classList.toggle('dark-mode'); });
+    themeToggle.addEventListener('click', () => { 
+        document.body.classList.toggle('dark-mode'); 
+    });
 
     async function sendMessage() {
         const text = userInput.value.trim();
         if (text === '') return;
-        userInput.value = ''; userInput.disabled = true; sendBtn.disabled = true;
+        
+        userInput.value = ''; 
+        userInput.disabled = true; 
+        sendBtn.disabled = true;
         appendMessage(text, 'user-msg');
         
         if (text.startsWith('/imagem ')) {
             handleImageGeneration(text.substring(8));
         } else {
-    // Se for a primeira mensagem, envia a instrução do sistema colada com a pergunta do usuário
-    if (chatMessages.length === 0) {
-        chatMessages.push({ role: "user", content: `${SYSTEM_INSTRUCTION}\n\nUsuário: ${text}` });
-    } else {
-        chatMessages.push({ role: "user", content: text });
+            // Se for a primeira mensagem, envia a instrução do sistema colada com a pergunta do usuário
+            if (chatMessages.length === 0) {
+                chatMessages.push({ role: "user", content: `${SYSTEM_INSTRUCTION}\n\nUsuário: ${text}` });
+            } else {
+                chatMessages.push({ role: "user", content: text });
+            }
+            handleTextGeneration();
+        }
     }
-    handleTextGeneration();
-}
 
     async function handleTextGeneration() {
         const typingDiv = appendMessage("Aegis está buscando informações e digitando...", 'aegis-msg');
         try {
-           const response = await fetch("/api/chat", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ messages: chatMessages })
-});
+            const response = await fetch("/api/chat", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ messages: chatMessages })
+            });
+            
             const data = await response.json();
-            typingDiv.remove();
+            if (typingDiv) typingDiv.remove();
+            
             if (response.ok && data.choices) {
                 const aegisResponse = data.choices[0].message.content;
                 appendMessage(aegisResponse, 'aegis-msg');
                 chatMessages.push({ role: "assistant", content: aegisResponse });
-            } else { throw new Error(data.error?.message || "Erro na API"); }
+            } else { 
+                throw new Error(data.error?.message || "Erro na API"); 
+            }
         } catch (error) {
-            if(typingDiv) typingDiv.remove();
+            if (typingDiv) typingDiv.remove();
             appendMessage(`Erro do Servidor: ${error.message}`, 'system-error');
         }
         finalizeSend();
@@ -154,7 +164,12 @@
         finalizeSend();
     }
 
-    function finalizeSend() { userInput.disabled = false; sendBtn.disabled = false; userInput.focus(); }
+    function finalizeSend() { 
+        userInput.disabled = false; 
+        sendBtn.disabled = false; 
+        userInput.focus(); 
+    }
+
     function appendMessage(text, className) {
         const msgDiv = document.createElement('div');
         msgDiv.className = `message ${className}`;
@@ -163,8 +178,11 @@
         messagesWrapper.scrollTop = messagesWrapper.scrollHeight;
         return msgDiv;
     }
+
     sendBtn.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+    userInput.addEventListener('keypress', (e) => { 
+        if (e.key === 'Enter') sendMessage(); 
+    });
 </script>
 </body>
 </html>
