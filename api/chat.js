@@ -13,10 +13,11 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: messages
-      })
+body: JSON.stringify({
+  model: "google/gemini-2.5-flash",
+  messages: messages,
+  max_tokens: 457 // Isso impede a IA de criar um podcast!
+})
     });
 
     const data = await response.json();
