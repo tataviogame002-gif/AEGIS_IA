@@ -77,8 +77,6 @@
 </div>
 
 <script>
-   // 🔒 Configuração para a Vercel
-    
     const sendBtn = document.getElementById('send-btn');
     const userInput = document.getElementById('user-input');
     const messages = document.getElementById('messages');
@@ -105,7 +103,6 @@
         if (text.startsWith('/imagem ')) {
             handleImageGeneration(text.substring(8));
         } else {
-            // Se for a primeira mensagem, envia a instrução do sistema colada com a pergunta do usuário
             if (chatMessages.length === 0) {
                 chatMessages.push({ role: "user", content: `${SYSTEM_INSTRUCTION}\n\nUsuário: ${text}` });
             } else {
