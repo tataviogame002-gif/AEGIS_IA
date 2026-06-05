@@ -11,7 +11,9 @@ export default async function handler(req, res) {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://vercel.com", // Avisa o OpenRouter de onde vem o acesso
+        "X-Title": "Aegis IA" // Dá um nome para o seu projeto no sistema deles
       },
 body: JSON.stringify({
   model: "google/gemini-2.5-flash",
