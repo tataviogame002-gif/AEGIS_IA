@@ -10,7 +10,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // Rota para processar o chat com a Cohere
-app.post('/api/chat', async (req, res) => {
+app.post('/chat', async (req, res) => {
+    // Aqui dentro fica o código que conversa com a Cohere...
+});
   try {
     const { messages } = req.body;
     const COHERE_API_KEY = process.env.COHERE_API_KEY;
