@@ -1,5 +1,12 @@
 {
   "name": "aegis-ia",
   "version": "1.0.0",
-  "dependencies": {}
+  "description": "Aegis IA no Render",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
 }
