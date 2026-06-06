@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname)));
 
 // Rota para processar o chat com a Cohere
-app.post('/chat', async (req, res) => {
+app.post("/chat", async (req, res) => {
     // Aqui dentro fica o código que conversa com a Cohere...
 });
   try {
