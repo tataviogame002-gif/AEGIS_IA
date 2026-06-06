@@ -115,7 +115,7 @@
     async function handleTextGeneration() {
         const typingDiv = appendMessage("Aegis está buscando informações e digitando...", 'aegis-msg');
         try {
-            const response = await fetch("api/chat", {
+            const response = await fetch("/chat", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
